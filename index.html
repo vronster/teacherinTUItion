@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>teacher inTUItion</title>
+
+    <!-- Bootstrap -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+    <link href='http://fonts.googleapis.com/css?family=Quicksand:400,700' rel='stylesheet' type='text/css'>
+
+    <style>
+      body {background-image:url("http://cs.wellesley.edu/~vlin/teacherinTUItionbackground2.png");}
+      h1, h3, h4 , label, button, footer { font-family: 'Quicksand', sans-serif; font-weight: 700; padding-top: 15px;}
+      h2 { font-size: 20px; padding:0px;}
+      h4 { font-size: 22px;}
+      tr, td {padding-left: 30px; padding-right:30px; vertical-align: middle; padding-bottom: 5px;}
+      td.facepic {padding-top: 20px;}
+      label {font-size: 18px;}
+      button {padding: 3px; margin: 5px; margin-bottom: 15px; margin-top:10px;}
+      footer {padding: 20px;}
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <br>
+        <div align="center"><img src="http://cs.wellesley.edu/~vlin/teacherinTUItionlogo.png"> <br>
+          <table>
+          <tr>
+          <td>
+            <h3 style="color:#3d85c6">JASON MILLER</h3> 
+            <h2 style="color:#3d85c6">kindergarten</h2> 
+            <h2 style="color:#3d85c6">mrs. smith</h2>
+          </td>
+          <td class="facepic">
+            <img src="http://cs.wellesley.edu/~vlin/user.JPG" height=150 width=auto>
+          </td>
+        </tr>
+      </table>
+         </div>
+     <div class="row">
+
+      <div class="col-md-4">
+      <h4 style="color:#3d85c6">Emotions</h4>
+      <textarea class="form-control" style="background:#1d5e99; color:#FFCD2B;" rows="8" id="inData"></textarea>
+      </div>
+
+      <div class="col-md-4">
+      <h4 style="color:#3d85c6">Level of Understanding</h4>
+      <!-- <p> RED </p> -->
+      <label style = "color:#C20A42" id="redLabel">   </label>
+      <!-- <p> YELLOW </p> -->
+      <label style = "color:#D99A0B" id="yellowLabel">   </label>
+      <!-- <p> GREEN </p> -->
+      <label style = "color:#3A8000" id="greenLabel">   </label>
+      </div>
+
+      <div class="col-md-4">
+      <h4 style="color:#3d85c6">Message to Class</h4>
+        <button id = "quiet" class = "btn btn-primary"> Quiet Down </button>
+        <button id = "listen" class = "btn btn-primary"> Listen Up </button>
+        <button id = "twomin" class = "btn btn-primary"> Two Minute Warning </button>
+      </div>
+
+    </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+      var socket = io.connect('http://localhost:8080');
+
+      socket.on('news', function (data) {
+        console.log(data);
+      });
+
+      socket.on('slider', function (data) {
+        console.log("Incoming slider data:",data.raw);
+        $("#inData").append(data.raw+"\r");
+        $("#inData").animate({scrollTop:$("#inData")[0].scrollHeight - $("#inData").height()},200);
+      }); 
+
+      socket.on('redButton', function(down) {
+        console.log("Red button pressed!");
+        $("#redLabel").text("totally lost");
+        $("#yellowLabel").text("  ");
+        $("#greenLabel").text("  ");
+      })
+
+      socket.on('yellowButton', function(down) {
+        console.log("Yellow button pressed!");
+        $("#yellowLabel").text("confused");
+        $("#redLabel").text("  ");
+        $("#greenLabel").text("  ");
+      })
+
+      socket.on('greenButton', function(down) {
+        console.log("Green button pressed!");
+        $("#greenLabel").text("understand");
+        $("#redLabel").text("  ");
+        $("#yellowLabel").text("  ");
+      })
+
+      $('.lightbtn').button();
+
+        $('#quiet').click(function(e) {
+        console.log("quiet clicked")
+        socket.emit('clickquiet');
+        e.preventDefault();
+      }); 
+
+        $('#listen').click(function(e) {
+        console.log("listen clicked")
+        socket.emit('clicklisten');
+        e.preventDefault();
+      }); 
+
+        $('#twomin').click(function(e) {
+        console.log("twomin clicked")
+        socket.emit('clicktwomin');
+        e.preventDefault();
+      }); 
+
+    </script>
+    </body>
+    <footer>
+      <div align = "center">
+      teacherinTUItion | Tangible User Interfaces, Fall 2014
+    </div>
+    </footer>
+</html>
